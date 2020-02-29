@@ -871,3 +871,171 @@ ax.coastlines()
 plt.title('Mean Precipitable Water During Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
 plt.savefig('pwtr_meanfield')
 plt.show()
+
+######################## plot global long term means
+
+### plot specific humidity
+
+fig = plt.figure(figsize = (20, 8.5))
+ax  = fig.add_subplot(2, 1, 1, projection = ccrs.PlateCarree(central_longitude = 180))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ax.coastlines()
+ 
+# Calculate mean values for DJF
+ 
+t_djf_ltm_850 = ds_SpecHum_850hPa_LTM.mean(dim = 'time')['shum']
+c = ax.contourf(t_djf_ltm_850.lon, t_djf_ltm_850.lat,
+                t_djf_ltm_850 + 273.15,10, transform = ccrs.PlateCarree(), cmap = 'Reds', alpha = 0.8)
+cbar = fig.colorbar(c)
+cbar.set_label('Specific Humidty (g/kg)', rotation=90)
+plt.title('Global Long Term Mean 850 mb Specific Humidity')
+
+### plot 500 mb geo. height
+
+fig = plt.figure(figsize = (20, 8.5))
+ax  = fig.add_subplot(2, 1, 1, projection = ccrs.PlateCarree(central_longitude = 180))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ax.coastlines()
+ 
+# Calculate mean values for DJF
+ 
+t_djf_ltm_850 = ds_GeopHgt_500hPa_LTM.mean(dim = 'time')['hgt']
+c = ax.contourf(t_djf_ltm_850.lon, t_djf_ltm_850.lat,
+                t_djf_ltm_850 + 273.15,10, transform = ccrs.PlateCarree(), cmap = 'Reds', alpha = 0.8)
+cbar = fig.colorbar(c)
+cbar.set_label('Geopotential Height (m)', rotation=90)
+plt.title('Global Long Term Mean Geopotential Height')
+
+### plot skin temps
+
+fig = plt.figure(figsize = (20, 8.5))
+ax  = fig.add_subplot(2, 1, 1, projection = ccrs.PlateCarree(central_longitude = 180))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ax.coastlines()
+ 
+# Calculate mean values for DJF
+ 
+t_djf_ltm_850 = ds_skt_Sfc_LTM.mean(dim = 'time')['skt']
+c = ax.contourf(t_djf_ltm_850.lon, t_djf_ltm_850.lat,
+                t_djf_ltm_850 + 273.15,10, transform = ccrs.PlateCarree(), cmap = 'Reds', alpha = 0.8)
+cbar = fig.colorbar(c)
+cbar.set_label('Temperature (C)', rotation=90)
+plt.title('Global Long Term Mean Skin Temperature')
+
+### plot pr_wtr
+
+fig = plt.figure(figsize = (20, 8.5))
+ax  = fig.add_subplot(2, 1, 1, projection = ccrs.PlateCarree(central_longitude = 180))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ax.coastlines()
+ 
+# Calculate mean values for DJF
+ 
+t_djf_ltm_850 = ds_pr_wtr_LTM.mean(dim = 'time')['pr_wtr']
+c = ax.contourf(t_djf_ltm_850.lon, t_djf_ltm_850.lat,
+                t_djf_ltm_850 + 273.15,10, transform = ccrs.PlateCarree(), cmap = 'Blues', alpha = 0.8)
+
+cbar = fig.colorbar(c)
+cbar.set_label('Precipitable Water (kg/m^2)', rotation=90)
+plt.title('Global Long Term Mean Precipitable Water')
+
+### plot 850 mb temps
+
+fig = plt.figure(figsize = (20, 8.5))
+ax  = fig.add_subplot(2, 1, 1, projection = ccrs.PlateCarree(central_longitude = 180))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ax.coastlines()
+ 
+# Calculate mean values for DJF
+ 
+t_djf_ltm_850 = ds_AirTemp_850hPa_LTM.mean(dim = 'time')['air']
+c = ax.contourf(t_djf_ltm_850.lon, t_djf_ltm_850.lat,
+                t_djf_ltm_850 + 273.15,10, transform = ccrs.PlateCarree(), cmap = 'Reds', alpha = 0.8)
+
+cbar = fig.colorbar(c)
+cbar.set_label('Temperature (C)', rotation=90)
+plt.title('Global Long Term 850 mb Temperatures for DJF')
+
+### plot surface winds
+
+# create variables 
+
+x = uwind_500_avg.lon
+y = uwind_500_avg.lat
+u = ds_Uwind_sig995_LTM.mean(dim = 'time')['uwnd']
+v = ds_Vwind_sig995_LTM.mean(dim = 'time')['vwnd']
+ 
+# Create the matplotlib figure/axis and plot
+
+fig = plt.figure(figsize=(20,10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.quiver(x,y,u,v,color='b')
+ax.set_global()
+ax.coastlines()
+
+plt.title('Global Long Term Mean Surface Winds')
+#plt.savefig('500 mb winds')
+plt.show()
+
+### plot 250 mb winds
+
+# create variables 
+
+x = uwind_250_avg.lon
+y = uwind_250_avg.lat
+u = ds_Uwind_250hPa_LTM.mean(dim = 'time')['uwnd']
+v = ds_Vwind_250hPa_LTM.mean(dim = 'time')['vwnd']
+ 
+# Create the matplotlib figure/axis and plot
+
+fig = plt.figure(figsize=(20,10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.quiver(x,y,u,v,color='b')
+ax.set_global()
+ax.coastlines()
+
+plt.title('Global Long Term Mean 250 mb Winds')
+#plt.savefig('500 mb winds')
+plt.show()
+
+### plot 500 mb winds
+
+# create variables 
+
+x = uwind_500_avg.lon
+y = uwind_500_avg.lat
+u = ds_Uwind_500hPa_LTM.mean(dim = 'time')['uwnd']
+v = ds_Vwind_500hPa_LTM.mean(dim = 'time')['vwnd']
+ 
+# Create the matplotlib figure/axis and plot
+
+fig = plt.figure(figsize=(20,10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.quiver(x,y,u,v,color='b')
+ax.set_global()
+ax.coastlines()
+
+plt.title('Global Long Term Mean 500 mb Winds')
+#plt.savefig('500 mb winds')
+plt.show()
+
+### plot 850 mb winds
+
+# create variables 
+
+x = uwind_850_avg.lon
+y = uwind_850_avg.lat
+u = ds_Uwind_850hPa_LTM.mean(dim = 'time')['uwnd']
+v = ds_Vwind_850hPa_LTM.mean(dim = 'time')['vwnd']
+ 
+# Create the matplotlib figure/axis and plot
+
+fig = plt.figure(figsize=(20,10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.quiver(x,y,u,v,color='b')
+ax.set_global()
+ax.coastlines()
+
+plt.title('Global Long Term Mean 850 mb Winds')
+#plt.savefig('500 mb winds')
+plt.show()
