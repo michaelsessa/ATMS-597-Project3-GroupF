@@ -387,5 +387,487 @@ combined_Vwind_sig995 = Dataset('/content/drive/My Drive/Project3/Combined/combi
 combined_SkinTemp_Sfc = Dataset('/content/drive/My Drive/Project3/Combined/combined_SkinTemp_Sfc_1996to2019_ExtremePrecipDays.nc')
 combined_PrecipWater = Dataset('/content/drive/My Drive/Project3/Combined/combined_PrecipWater_1996to2019_ExtremePrecipDays.nc')
 
+### assign data to variables for plotting
 
-#Data and files are then able to be plotted
+uwind_250 = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_Uwind_250hPa_1996to2019_ExtremePrecipDays.nc')
+vwind_250 = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_Vwind_250hPa_1996to2019_ExtremePrecipDays.nc')
+hgt = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_GeopHgt_500hPa_1996to2019_ExtremePrecipDays.nc')
+uwind_500 = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_Uwind_500hPa_1996to2019_ExtremePrecipDays.nc')
+vwind_500 = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_Vwind_500hPa_1996to2019_ExtremePrecipDays.nc')
+uwind_850 = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_Uwind_850hPa_1996to2019_ExtremePrecipDays.nc')
+vwind_850 = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_Vwind_850hPa_1996to2019_ExtremePrecipDays.nc')
+shm = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_SpecHum_850hPa_1996to2019_ExtremePrecipDays.nc')
+temp_850 = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_AirTemp_850hPa_1996to2019_ExtremePrecipDays.nc')
+uwind_sfc = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_Uwind_sig995_1996to2019_ExtremePrecipDays.nc')
+vwind_sfc = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_Vwind_sig995_1996to2019_ExtremePrecipDays.nc')
+skt = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_skt_Sfc_1996to2019_ExtremePrecipDays.nc')
+pwtr = xr.open_dataset('/content/drive/My Drive/Colab Notebooks/ATMS 597 Projects/Project3/Combined/combined_pr_wtr_1996to2019_ExtremePrecipDays.nc')
+
+### calculate means for each variable 
+
+uwind_250_avg = uwind_250.mean(dim='index')
+vwind_250_avg = vwind_250.mean(dim='index')
+hgt_avg = hgt.mean(dim='index')
+uwind_500_avg = uwind_500.mean(dim='index')
+vwind_500_avg = vwind_500.mean(dim='index')
+uwind_850_avg = uwind_850.mean(dim='index')
+vwind_850_avg = vwind_850.mean(dim='index')
+shm_avg = shm.mean(dim='index')
+temp_850_avg = temp_850.mean(dim='index')
+uwind_sfc_avg = uwind_sfc.mean(dim='index')
+vwind_sfc_avg = vwind_sfc.mean(dim='index')
+skt_avg = skt.mean(dim='index')
+pwtr_avg = pwtr.mean(dim='index')
+
+### adjust units for variables that need it 
+
+temp_850_avg['air'] = temp_850_avg['air'] - 273.15
+skt_avg['skt'] = skt_avg['skt'] - 273.15
+shm_avg['shum'] = shm_avg['shum'] * 1000
+
+################### plot anomaly fields
+
+### plot 250 mb winds
+
+# create variables
+
+x = uwind_250_avg.lon
+y = uwind_250_avg.lat
+u = uwind_250_avg['uwnd']
+v = vwind_250_avg['vwnd']
+
+u_ltm = ds_Uwind_250hPa_LTM['uwnd'].mean(dim='time')
+v_ltm = ds_Vwind_250hPa_LTM['vwnd'].mean(dim='time')
+ 
+u = u - u_ltm
+v = v - v_ltm
+ 
+# Create the matplotlib figure/axis and plot
+
+fig = plt.figure(figsize=(20,10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.quiver(x,y,u,v,color='b')
+ax.set_global()
+ax.coastlines()
+
+plt.title('250 mb Wind Vector and Speed Anomalies for Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('250 mb wind')
+plt.show()
+
+### plot 500 mb winds
+
+# create variables 
+
+x = uwind_500_avg.lon
+y = uwind_500_avg.lat
+u = uwind_500_avg['uwnd']
+v = vwind_500_avg['vwnd']
+
+u_ltm = ds_Uwind_500hPa_LTM['uwnd'].mean(dim='time')
+v_ltm = ds_Vwind_500hPa_LTM['vwnd'].mean(dim='time')
+ 
+u = u - u_ltm
+v = v - v_ltm
+ 
+# Create the matplotlib figure/axis and plot
+
+fig = plt.figure(figsize=(20,10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.quiver(x,y,u,v,color='b')
+ax.set_global()
+ax.coastlines()
+
+plt.title('500 mb Wind Vector and Speed Anomalies for Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('500 mb winds')
+plt.show()
+
+### plot 500 mb height
+
+x = hgt_avg.lon
+y = hgt_avg.lat
+ 
+# Create the matplotlib figure and axis
+fig = plt.figure(figsize=(20,8.5))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ 
+# Plot height as filled contours
+hgt_ltm = ds_GeopHgt_500hPa_LTM['hgt'].mean(dim='time')
+hgt = hgt_avg['hgt']
+ 
+data = hgt - hgt_ltm
+data_cyc, x_cyc = cutil.add_cyclic_point(data, coord=x)
+contourf_ = ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree(), cmap = 'seismic')
+cbar = fig.colorbar(contourf_)
+cbar.set_label('Geopotential Height Anomaly (m)', rotation=90)
+ax.set_global()
+ax.coastlines()
+
+plt.title('500 mb Geopotential Height Anomalies for Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('500 mb height')
+plt.show()
+
+### plot 850 mb temperature
+
+x = temp_850_avg.lon
+y = temp_850_avg.lat
+ 
+# Create the matplotlib figure and axis
+fig = plt.figure(figsize=(20,8.5))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ 
+# Plot temp as filled contours
+temp_ltm = ds_AirTemp_850hPa_LTM['air'].mean(dim='time')
+temp = temp_850_avg['air']
+ 
+data = temp - temp_ltm
+data_cyc, x_cyc = cutil.add_cyclic_point(data, coord=x)
+# ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree())
+contourf_ = ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree(), cmap = 'seismic')
+cbar = fig.colorbar(contourf_)
+cbar.set_label('Temperature Anomaly (C)', rotation=90)
+ax.set_global()
+ax.coastlines()
+
+plt.title('850 mb Temperature Anomalies for Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('850 mb temp')
+plt.show()
+
+### plot 850 mb specific humidity 
+
+x = shm_avg.lon
+y = shm_avg.lat
+ 
+# Create the matplotlib figure and axis
+fig = plt.figure(figsize=(20,8.5))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ 
+# Plot shm as filled contours
+shm_ltm = ds_SpecHum_850hPa_LTM['shum'].mean(dim='time')
+shm = shm_avg['shum']
+ 
+data = shm - shm_ltm
+data_cyc, x_cyc = cutil.add_cyclic_point(data, coord=x)
+# ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree())
+contourf_ = ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree(), cmap = 'seismic')
+cbar = fig.colorbar(contourf_)
+cbar.set_label('Specific Humidity Anomaly (g/kg)', rotation=90)
+ax.set_global()
+ax.coastlines()
+
+plt.title('850 mb Specific Humidity Anomalies for Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('850 mb shm')
+plt.show()
+
+### plot 850 mb winds
+
+x = uwind_850_avg.lon
+y = uwind_850_avg.lat
+u = uwind_850_avg['uwnd']
+v = vwind_850_avg['vwnd']
+
+u_ltm = ds_Uwind_850hPa_LTM['uwnd'].mean(dim='time')
+v_ltm = ds_Vwind_850hPa_LTM['vwnd'].mean(dim='time')
+ 
+u = u - u_ltm
+v = v - v_ltm
+ 
+# Create the matplotlib figure and axis
+fig = plt.figure(figsize=(20,10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.quiver(x,y,u,v,color='b')
+
+
+ax.set_global()
+ax.coastlines()
+
+plt.title('850 mb Wind Vector and Speed Anomalies for Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('850 mb wind')
+plt.show()
+
+### plot skin temp
+
+# For skin temperature 
+x = skt_avg.lon
+y = skt_avg.lat
+ 
+# Create the matplotlib figure and axis
+fig = plt.figure(figsize=(20,8.5))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ 
+# Plot skin temperature as filled contours
+skt_ltm = ds_skt_Sfc_LTM['skt'].mean(dim='time')
+skt_ext = skt_avg['skt']
+ 
+data = skt_ext - skt_ltm
+data_cyc, x_cyc = cutil.add_cyclic_point(data, coord=x)
+# ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree())
+contourf_ = ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree(), cmap = 'seismic')
+cbar = fig.colorbar(contourf_)
+cbar.set_label('Skin Temperature Anomaly (C)', rotation=90)
+ax.set_global()
+ax.coastlines()
+
+plt.title('Skin Temperature Anomalies for Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('skt')
+plt.show()
+
+### plot surface wind
+
+x = uwind_sfc_avg.lon
+y = uwind_sfc_avg.lat
+u = uwind_sfc_avg['uwnd']
+v = vwind_sfc_avg['vwnd']
+
+u_ltm = ds_Uwind_sig995_LTM['uwnd'].mean(dim='time')
+v_ltm = ds_Vwind_sig995_LTM['vwnd'].mean(dim='time')
+ 
+u = u - u_ltm
+v = v - v_ltm
+ 
+# Create the matplotlib figure and axis
+fig = plt.figure(figsize=(20,10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.quiver(x,y,u,v,color='b')
+
+
+ax.set_global()
+ax.coastlines()
+
+plt.title('Surface Wind Vector and Speed Anomalies for Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('sfc wind')
+plt.show()
+
+### plot precipitable water
+
+x = pwtr_avg.lon
+y = pwtr_avg.lat
+ 
+# Create the matplotlib figure and axis
+fig = plt.figure(figsize=(20,8.5))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ 
+# Plot height as filled contours
+pwtr_ltm = ds_pr_wtr_LTM ['pr_wtr'].mean(dim='time')
+pwtr = pwtr_avg['pr_wtr']
+ 
+data = pwtr - pwtr_ltm
+data_cyc, x_cyc = cutil.add_cyclic_point(data, coord=x)
+# ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree())
+contourf_ = ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree(), cmap = 'seismic')
+cbar = fig.colorbar(contourf_)
+cbar.set_label('Precipitable Water Anomaly (kg/m^2)', rotation=90)
+ax.set_global()
+ax.coastlines()
+
+plt.title('Precipitable Water Anomalies for Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('pwtr')
+plt.show()
+
+############# plot mean fields 
+
+### 250 mb winds
+
+# create variables 
+
+x = uwind_250_avg.lon
+y = uwind_250_avg.lat
+u = uwind_250_avg['uwnd']
+v = vwind_250_avg['vwnd']
+ 
+# Create the matplotlib figure/axis and plot
+
+fig = plt.figure(figsize=(20,10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.quiver(x,y,u,v,color='b')
+ax.set_global()
+ax.coastlines()
+
+plt.title('Mean 250 mb Wind Vectors and Speed during Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('250 mb winds meanfield')
+plt.show()
+
+### 500 mb winds
+
+# create variables 
+
+x = uwind_500_avg.lon
+y = uwind_500_avg.lat
+u = uwind_500_avg['uwnd']
+v = vwind_500_avg['vwnd']
+ 
+# Create the matplotlib figure/axis and plot
+
+fig = plt.figure(figsize=(20,10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.quiver(x,y,u,v,color='b')
+ax.set_global()
+ax.coastlines()
+
+plt.title('Mean 500 mb Wind Vectors and Speed during Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('500 mb winds meanfield')
+plt.show()
+
+### 500 mb height
+
+x = hgt_avg.lon
+y = hgt_avg.lat
+ 
+# Create the matplotlib figure and axis
+fig = plt.figure(figsize=(20,8.5))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ 
+# Plot height as filled contours
+hgt = hgt_avg['hgt']
+ 
+data = hgt
+data_cyc, x_cyc = cutil.add_cyclic_point(data, coord=x)
+# ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree())
+contourf_ = ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree(), cmap = 'Reds')
+cbar = fig.colorbar(contourf_)
+cbar.set_label('Geopotential Height (m)', rotation=90)
+ax.set_global()
+ax.coastlines()
+
+plt.title('Mean Geopotential Height During Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('hgt_meanfield')
+plt.show()
+
+### 850 mb temp
+
+x = temp_850_avg.lon
+y = temp_850_avg.lat
+ 
+# Create the matplotlib figure and axis
+fig = plt.figure(figsize=(20,8.5))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ 
+# Plot height as filled contours
+temp = temp_850_avg['air']
+ 
+data = temp
+data_cyc, x_cyc = cutil.add_cyclic_point(data, coord=x)
+# ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree())
+contourf_ = ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree(), cmap = 'Reds')
+cbar = fig.colorbar(contourf_)
+cbar.set_label('Temperature (C)', rotation=90)
+ax.set_global()
+ax.coastlines()
+
+plt.title('Mean 850 mb Temperature During Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('850temp_meanfield')
+plt.show()
+
+### 850 mb shm
+
+x = shm_avg.lon
+y = shm_avg.lat
+ 
+# Create the matplotlib figure and axis
+fig = plt.figure(figsize=(20,8.5))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ 
+# Plot height as filled contours
+shm = shm_avg['shum']
+ 
+data = shm
+data_cyc, x_cyc = cutil.add_cyclic_point(data, coord=x)
+# ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree())
+contourf_ = ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree(), cmap = 'Reds')
+cbar = fig.colorbar(contourf_)
+cbar.set_label('Specific Humidity  (kg/kg)', rotation=90)
+ax.set_global()
+ax.coastlines()
+
+plt.title('Mean 850 mb Specific Humidity During Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('850shm_meanfield')
+plt.show()
+
+### 850 mb winds
+
+# create variables 
+
+x = uwind_850_avg.lon
+y = uwind_850_avg.lat
+u = uwind_850_avg['uwnd']
+v = vwind_850_avg['vwnd']
+ 
+# Create the matplotlib figure/axis and plot
+
+fig = plt.figure(figsize=(20,10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.quiver(x,y,u,v,color='b')
+ax.set_global()
+ax.coastlines()
+
+plt.title('Mean 850 mb Wind Vectors and Speed during Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('850 mb winds meanfield')
+plt.show()
+
+### skin temps
+
+x = skt_avg.lon
+y = skt_avg.lat
+ 
+# Create the matplotlib figure and axis
+fig = plt.figure(figsize=(20,8.5))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ 
+# Plot height as filled contours
+skt = skt_avg['skt']
+ 
+data = skt
+data_cyc, x_cyc = cutil.add_cyclic_point(data, coord=x)
+contourf_ = ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree(), cmap = 'Reds')
+cbar = fig.colorbar(contourf_)
+cbar.set_label('Skin Temperature (C)', rotation=90)
+ax.set_global()
+ax.coastlines()
+
+plt.title('Mean Skin Temperature During Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('skt_meanfield')
+plt.show()
+
+### sfc winds
+
+# create variables 
+
+x = uwind_sfc_avg.lon
+y = uwind_sfc_avg.lat
+u = uwind_sfc_avg['uwnd']
+v = vwind_sfc_avg['vwnd']
+ 
+# Create the matplotlib figure/axis and plot
+
+fig = plt.figure(figsize=(20,10))
+ax = plt.axes(projection=ccrs.PlateCarree())
+plt.quiver(x,y,u,v,color='b')
+ax.set_global()
+ax.coastlines()
+
+plt.title('Mean Surface Wind Vectors and Speed during Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('sfc winds meanfield')
+plt.show()
+
+### precip water
+
+x = pwtr_avg.lon
+y = pwtr_avg.lat
+ 
+# Create the matplotlib figure and axis
+fig = plt.figure(figsize=(20,8.5))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ 
+# Plot height as filled contours
+pwtr = pwtr_avg['pr_wtr']
+ 
+data = pwtr
+data_cyc, x_cyc = cutil.add_cyclic_point(data, coord=x)
+contourf_ = ax.contourf(x_cyc, y, data_cyc, transform=ccrs.PlateCarree(), cmap = 'Blues')
+cbar = fig.colorbar(contourf_)
+cbar.set_label('Precipitable Water (kg/m^2)', rotation=90)
+ax.set_global()
+ax.coastlines()
+
+plt.title('Mean Precipitable Water During Extreme Precipitation Days in Cordoba, Argentina (1996-2019)')
+plt.savefig('pwtr_meanfield')
+plt.show()
